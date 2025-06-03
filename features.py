@@ -15,17 +15,17 @@ DATASET = 'VocPascal'
 MODEL = 'DINO'
 data_dir = 'VocPascal'
 image_dir = os.path.join(data_dir, 'JPEGImages')
-list_of_images = os.path.join(data_dir, 'train_voc.txt')
+list_of_images = os.path.join(data_dir, 'val_voc.txt')
 if __name__ == '__main__':
-    #reading data
+    
     with open(list_of_images, "r+") as file: 
         files = [f.split('\t') for f in file]
         
-    # check GPU 
+     
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
-    # defining the image preprocessing
+    
     preprocess = transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
@@ -33,7 +33,7 @@ if __name__ == '__main__':
             mean=[0.485, 0.456, 0.406], 
             std=[0.229, 0.224, 0.225]),
         ])
-    #load de model
+    
     dim = 512     
     model = None
     if MODEL == 'resnet18' :
@@ -42,15 +42,15 @@ if __name__ == '__main__':
     if MODEL == 'resnet34' :
         model = models.resnet34(pretrained=True).to(device)
         model.fc = torch.nn.Identity() 
-    #you can add more models
+    
     if MODEL=="DINO":
-        model = torch.hub.load('facebookresearch/dinov2', 'dinov2_vits14').to(device)
-        dim = 384
+        model = torch.hub.load('facebookresearch/dinov2', 'dinov2_vit14').to(device)
+        dim = 1536 
     if MODEL=="CLIP":
         model, preprocess_clip = clip.load("ViT-B/32", device=device) 
         
     
-    #Pasamos la imagen por el modelo
+    
     with torch.no_grad():        
         n_images = len(files)
         features = np.zeros((n_images, dim), dtype = np.float32)        
@@ -62,9 +62,9 @@ if __name__ == '__main__':
 
             filename = os.path.join(image_dir, img_name + ".jpg")
 
-            # Cargar y recortar la imagen al bounding box
+           
             image = Image.open(filename).convert('RGB')
-            cropped = image.crop((xmin, ymin, xmax, ymax))  # (left, upper, right, lower)
+            cropped = image.crop((xmin, ymin, xmax, ymax))  
 
             # Preprocesar
             if MODEL == "CLIP":

@@ -119,7 +119,7 @@ def load_labels_from_txt(split, dataset_path='VocPascal'):
 
 # ---------------------------- Configuración ----------------------------
 
-encoder = "DINO"
+encoder = "resnet34"
 model_type = "SVM"
 dataset = "VocPascal"
 n_classes = 20

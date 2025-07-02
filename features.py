@@ -16,7 +16,7 @@ def extract_features(model_name="CLIP", split="val", dataset="VocPascal"):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
-    # Preprocesamiento
+   
     preprocess_std = transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
@@ -78,7 +78,7 @@ def extract_features(model_name="CLIP", split="val", dataset="VocPascal"):
             else:
                 image_tensor = preprocess_std(cropped).unsqueeze(0).to(device)
                 output = model(image_tensor)
-                if isinstance(output, tuple):  # Por si retorna varios outputs (como algunos DINO)
+                if isinstance(output, tuple):  
                     output = output[0]
                 features[i, :] = output.cpu().squeeze().numpy()
 

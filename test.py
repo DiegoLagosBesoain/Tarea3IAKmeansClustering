@@ -9,7 +9,7 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 import matplotlib.pyplot as plt
 import os
 
-# ---------------------------- MLP ----------------------------
+
 
 class MLPClassifier(nn.Module):
     def __init__(self, input_dim, num_classes):
@@ -55,7 +55,7 @@ def train_mlp(X_train, y_train, X_val, y_val, num_classes):
     acc = accuracy_score(y_val, preds)
     return acc, preds
 
-# ---------------------------- SVM ----------------------------
+
 
 def train_svm(X_train, y_train, X_val, y_val):
     clf = SVC()  # usa kernel='rbf', C=1.0, gamma='scale' por defecto
@@ -64,7 +64,7 @@ def train_svm(X_train, y_train, X_val, y_val):
     acc = accuracy_score(y_val, preds)
     return acc, preds
 
-# ---------------------------- Random Forest ----------------------------
+
 
 def train_rf(X_train, y_train, X_val, y_val):
     rf = RandomForestClassifier(n_estimators=100, max_depth=20, random_state=42)
@@ -73,7 +73,7 @@ def train_rf(X_train, y_train, X_val, y_val):
     acc = accuracy_score(y_val, preds)
     return acc, preds
 
-# ---------------------------- Métricas ----------------------------
+
 
 def per_class_accuracy(y_true, y_pred, n_classes=20):
     report = classification_report(y_true, y_pred, output_dict=True)
@@ -100,7 +100,7 @@ def plot_conf_matrix(y_true, y_pred, model_name, encoder):
     plt.savefig(f'data/conf_matrix_{model_name}_{encoder}.png')
     plt.show()
 
-# ---------------------------- Obtener etiquetas ----------------------------
+
 
 def load_labels_from_txt(split, dataset_path='VocPascal'):
     txt_file = os.path.join(dataset_path, f"{split}_voc.txt")
@@ -109,7 +109,7 @@ def load_labels_from_txt(split, dataset_path='VocPascal'):
 
     labels_str = [line.split('\t')[1].strip() for line in lines]
 
-    # Crear diccionario de clases
+    
     unique_classes = sorted(set(labels_str))
     class_to_idx = {cls_name: idx for idx, cls_name in enumerate(unique_classes)}
     print("Diccionario de clases:", class_to_idx)
@@ -117,14 +117,14 @@ def load_labels_from_txt(split, dataset_path='VocPascal'):
     labels = [class_to_idx[label] for label in labels_str]
     return np.array(labels)
 
-# ---------------------------- Configuración ----------------------------
+
 
 encoder = "resnet34"
 model_type = "SVM"
 dataset = "VocPascal"
 n_classes = 20
 
-# ---------------------------- Cargar representaciones y etiquetas ----------------------------
+
 
 X_train = np.load(f"data/feat_{encoder}_train_{dataset}.npy")
 X_val = np.load(f"data/feat_{encoder}_val_{dataset}.npy")
@@ -132,7 +132,7 @@ X_val = np.load(f"data/feat_{encoder}_val_{dataset}.npy")
 y_train = load_labels_from_txt("train", dataset_path=dataset)
 y_val = load_labels_from_txt("val", dataset_path=dataset)
 
-# ---------------------------- Entrenar ----------------------------
+
 
 if model_type == "MLP":
     acc, preds = train_mlp(X_train, y_train, X_val, y_val, num_classes=n_classes)
@@ -143,7 +143,7 @@ elif model_type == "RF":
 else:
     raise ValueError("Modelo no válido. Usa 'MLP', 'SVM' o 'RF'.")
 
-print(f"\n✅ Accuracy total ({model_type} con {encoder}): {acc:.4f}")
+print(f"\n Accuracy total ({model_type} con {encoder}): {acc:.4f}")
 
 accs = per_class_accuracy(y_val, preds, n_classes=n_classes)
 plot_accuracy_bar(accs, model_type, encoder)
